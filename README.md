@@ -1,8 +1,7 @@
 # Golang binglog
 
 ## Setup database
-tested on go1.11.2 and mariadb10.2 (binlog format must be 'raw')
-In pkg/mariadb.go change with your connection data
+binlog format must be 'row' In pkg/mariadb.go change with your connection data
 ```
 cfg.Addr = fmt.Sprintf("%s:%d", "127.0.0.1", 3306) //host,port
 cfg.User = "root"
