@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/JackShadow/go-binlog-example/src/pkg/binlog"
+	"github.com/sofyan48/go-binlog/src/pkg/binlog"
 )
 
 func main() {
 	go binlog.BinlogListener()
 	time.Sleep(2 * time.Minute)
-	fmt.Print("Thx for watching, goodbuy")
+	fmt.Print("Thanks")
 }

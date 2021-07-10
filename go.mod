@@ -1,4 +1,4 @@
-module github.com/JackShadow/go-binlog-example
+module github.com/sofyan48/go-binlog
 
 go 1.15
 

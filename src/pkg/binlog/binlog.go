@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	"github.com/JackShadow/go-binlog-example/src/pkg/mariadb"
 	"github.com/siddontang/go-mysql/canal"
+	"github.com/sofyan48/go-binlog/src/pkg/mariadb"
 )
 
 type binlogHandler struct {
