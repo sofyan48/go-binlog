@@ -1,5 +1,7 @@
 package serve
 
+import "context"
+
 type Command interface {
-	Exec()
+	Exec(ctx context.Context)
 }

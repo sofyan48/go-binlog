@@ -22,16 +22,10 @@ func NewRouter() Router {
 	return &router{}
 }
 
-func NewBinlogCommand(log binlog.Contract) contract.LogProcessor {
-	return &binlogCommand{
-		binLog: log,
-	}
-}
-
-func (rtr *router) LogRouter() {
+func (rtr *router) LogRouter(ctx context.Context) {
 	binLog := bootstrap.GetBinlog()
 	binlogStart := NewBinlogCommand(binLog)
-	binlogStart.Exec()
+	binlogStart.Exec(ctx)
 }
 
 type binlogCommand struct {
@@ -39,7 +33,13 @@ type binlogCommand struct {
 	canal.DummyEventHandler
 }
 
-func (l *binlogCommand) Exec() error {
+func NewBinlogCommand(log binlog.Contract) contract.LogProcessor {
+	return &binlogCommand{
+		binLog: log,
+	}
+}
+
+func (l *binlogCommand) Exec(ctx context.Context) error {
 	l.binLog.Exec(&binlogCommand{})
 	return nil
 }

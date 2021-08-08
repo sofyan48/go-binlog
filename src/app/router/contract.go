@@ -1,7 +1,9 @@
 package router
 
+import "context"
+
 //
 
 type Router interface {
-	LogRouter()
+	LogRouter(ctx context.Context)
 }

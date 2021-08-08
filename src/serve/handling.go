@@ -1,6 +1,8 @@
 package serve
 
 import (
+	"context"
+
 	"github.com/sofyan48/go-binlog/src/app/router"
 )
 
@@ -14,6 +16,6 @@ func NewCommand() Command {
 	}
 }
 
-func (c *commandRouter) Exec() {
-	c.route.LogRouter()
+func (c *commandRouter) Exec(ctx context.Context) {
+	c.route.LogRouter(ctx)
 }

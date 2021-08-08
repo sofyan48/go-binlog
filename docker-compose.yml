@@ -10,7 +10,7 @@ services:
       MARIADB_ROOT_PASSWORD: root
       MARIADB_USER: testing
       MARIADB_PASSWORD: testing
-      MARIADB_DATABASE: test
+      MARIADB_DATABASE: binlog
       MARIADB_HOST: "%"
       TZ: "Asia/Jakarta"
     volumes:
@@ -18,8 +18,7 @@ services:
       - ./deployment/config/my.cnf:/etc/mysql/my.cnf
     ports:
       - 3306:3306
-    depends_on: 
-      - es 
+
   es: 
     image: elasticsearch:6.8.2 
     ports: 

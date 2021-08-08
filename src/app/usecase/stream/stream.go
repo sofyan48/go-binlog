@@ -1,16 +1,24 @@
 package stream
 
 import (
+	"context"
+	"fmt"
+
+	"github.com/sofyan48/go-binlog/src/app/repositories"
 	"github.com/sofyan48/go-binlog/src/app/usecase/contract"
 )
 
 type streams struct {
+	repo repositories.UserInterface
 }
 
-func NewStream() contract.LogProcessor {
-	return &streams{}
+func NewStream(repo repositories.UserInterface) contract.Usecase {
+	return &streams{
+		repo: repo,
+	}
 }
 
-func (c *streams) Exec() error {
+func (c *streams) Exec(ctx context.Context, id int) error {
+	fmt.Println(id)
 	return nil
 }
