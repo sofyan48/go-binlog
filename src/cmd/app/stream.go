@@ -6,10 +6,12 @@ import (
 )
 
 func Stream() *cobra.Command {
+
 	return &cobra.Command{
 		Use:   "run",
 		Short: "Run HTTP Server",
 		Run: func(cmd *cobra.Command, args []string) {
+
 			serve.NewCommand().Exec()
 		},
 	}

@@ -2,9 +2,11 @@ package entity
 
 import "time"
 
-type User struct {
-	Id      int       `gorm:"column:id"`
-	Name    string    `gorm:"column:name"`
-	Status  string    `gorm:"column:status"`
-	Created time.Time `gorm:"column:created"`
+//go:generate easytags $GOFILE db,json
+
+type DBUser struct {
+	Id      int        `db:"id" json:"id"`
+	Name    string     `db:"name" json:"name"`
+	Status  string     `db:"status" json:"status"`
+	Created *time.Time `db:"created" json:"created"`
 }
