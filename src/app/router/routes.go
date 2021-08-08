@@ -3,6 +3,7 @@ package router
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/go-mysql-org/go-mysql/canal"
 	"github.com/sofyan48/go-binlog/src/app/entity"
@@ -20,7 +21,7 @@ func (l *binlogCommand) logCMDRouter(ctx context.Context, cnc context.CancelFunc
 
 	// repositories
 	userRepo := repositories.NewUserRepositories(db)
-
+	time.Sleep(5 * time.Second)
 	// routes
 	switch table {
 	case "user":

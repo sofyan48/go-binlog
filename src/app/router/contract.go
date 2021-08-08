@@ -1,9 +1,11 @@
 package router
 
-import "context"
-
 //
 
 type Router interface {
-	LogRouter(ctx context.Context)
+	LogRouter()
+}
+
+type LogProcessor interface {
+	Exec() error
 }

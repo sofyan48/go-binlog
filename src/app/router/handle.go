@@ -9,7 +9,6 @@ import (
 	"syscall"
 
 	"github.com/go-mysql-org/go-mysql/canal"
-	"github.com/sofyan48/go-binlog/src/app/usecase/contract"
 	"github.com/sofyan48/go-binlog/src/bootstrap"
 	"github.com/sofyan48/go-binlog/src/pkg/binlog"
 )
@@ -22,10 +21,10 @@ func NewRouter() Router {
 	return &router{}
 }
 
-func (rtr *router) LogRouter(ctx context.Context) {
+func (rtr *router) LogRouter() {
 	binLog := bootstrap.GetBinlog()
 	binlogStart := NewBinlogCommand(binLog)
-	binlogStart.Exec(ctx)
+	binlogStart.Exec()
 }
 
 type binlogCommand struct {
@@ -33,13 +32,13 @@ type binlogCommand struct {
 	canal.DummyEventHandler
 }
 
-func NewBinlogCommand(log binlog.Contract) contract.LogProcessor {
+func NewBinlogCommand(log binlog.Contract) LogProcessor {
 	return &binlogCommand{
 		binLog: log,
 	}
 }
 
-func (l *binlogCommand) Exec(ctx context.Context) error {
+func (l *binlogCommand) Exec() error {
 	l.binLog.Exec(&binlogCommand{})
 	return nil
 }
