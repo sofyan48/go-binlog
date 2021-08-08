@@ -18,6 +18,7 @@ func (l *binlogCommand) logCMDRouter(ctx context.Context, cnc context.CancelFunc
 
 	// bootstrap
 	db := bootstrap.RegistryMariaMasterSlave()
+	elastic := bootstrap.NewSessionElastic()
 
 	// repositories
 	userRepo := repositories.NewUserRepositories(db)
@@ -25,7 +26,7 @@ func (l *binlogCommand) logCMDRouter(ctx context.Context, cnc context.CancelFunc
 	// routes
 	switch table {
 	case "user":
-		streamact := stream.NewStream(userRepo)
+		streamact := stream.NewStream(userRepo, elastic)
 		userData := entity.User{}
 		parseFunc.GetBinLogData(&userData, row, i)
 		switch action {
