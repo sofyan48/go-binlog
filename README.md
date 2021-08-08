@@ -48,4 +48,4 @@ User 1 is deleted with name Jonh
 ```
 
 ## Example Architecture
-
+![Example Architecture](https://github.com/sofyan48/go-binlog/blob/master/resource/ex_architecture.png)
