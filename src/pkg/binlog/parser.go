@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-mysql-org/go-mysql/canal"
+	"github.com/go-mysql-org/go-mysql/schema"
 	jsoniter "github.com/json-iterator/go"
-	"github.com/siddontang/go-mysql/canal"
-	"github.com/siddontang/go-mysql/schema"
 )
 
 type BinlogParser struct{}

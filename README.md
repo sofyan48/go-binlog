@@ -46,3 +46,6 @@ User 1 is created with name Jack
 User 1 is updated from name Jack to name Jonh
 User 1 is deleted with name Jonh
 ```
+
+## Example Architecture
+

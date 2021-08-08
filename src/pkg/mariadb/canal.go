@@ -3,7 +3,7 @@ package mariadb
 import (
 	"fmt"
 
-	"github.com/siddontang/go-mysql/canal"
+	"github.com/go-mysql-org/go-mysql/canal"
 )
 
 func GetCanal() (*canal.Canal, error) {

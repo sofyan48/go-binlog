@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	"github.com/siddontang/go-mysql/canal"
+	"github.com/go-mysql-org/go-mysql/canal"
 	"github.com/sofyan48/go-binlog/src/pkg/mariadb"
 )
 
@@ -32,14 +32,18 @@ func (h *binlogHandler) OnRow(e *canal.RowsEvent) error {
 		key := e.Table.Schema + "." + e.Table.Name
 		switch key {
 		case User{}.SchemaName() + "." + User{}.TableName():
+			fmt.Println("======> ", e.Action)
 			user := User{}
-			h.GetBinLogData(&user, e, i)
+			err := h.GetBinLogData(&user, e, i)
+			if err != nil {
+				fmt.Println("Error:> ", err)
+			}
 
 			switch e.Action {
 			case canal.UpdateAction:
 				oldUser := User{}
 				h.GetBinLogData(&oldUser, e, i-1)
-				fmt.Printf("User %d name changed from %s to %s\n", user.Id, oldUser.Name, user.Name)
+				fmt.Printf("User %d name update from %s to %s\n", user.Id, oldUser.Name, user.Name)
 			case canal.InsertAction:
 				fmt.Printf("User %d is created with name %s\n", user.Id, user.Name)
 			case canal.DeleteAction:
