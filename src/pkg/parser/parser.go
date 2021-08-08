@@ -1,4 +1,4 @@
-package binlog
+package parser
 
 import (
 	"fmt"
@@ -11,9 +11,14 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-type BinlogParser struct{}
+type parserLog struct {
+}
 
-func (m *BinlogParser) GetBinLogData(element interface{}, e *canal.RowsEvent, n int) error {
+func NewParserLog() Contract {
+	return &parserLog{}
+}
+
+func (p *parserLog) GetBinLogData(element interface{}, e *canal.RowsEvent, n int) error {
 	var columnName string
 	var ok bool
 	v := reflect.ValueOf(element)
@@ -21,30 +26,28 @@ func (m *BinlogParser) GetBinLogData(element interface{}, e *canal.RowsEvent, n 
 	t := s.Type()
 	num := t.NumField()
 	for k := 0; k < num; k++ {
-		parsedTag := parseTagSetting(t.Field(k).Tag)
+		parsedTag := p.parseTagSetting(t.Field(k).Tag)
 		name := s.Field(k).Type().Name()
 
 		if columnName, ok = parsedTag["COLUMN"]; !ok || columnName == "COLUMN" {
 			continue
 		}
-
 		switch name {
 		case "bool":
-			s.Field(k).SetBool(m.boolHelper(e, n, columnName))
+			s.Field(k).SetBool(p.boolHelper(e, n, columnName))
 		case "int":
-			s.Field(k).SetInt(m.intHelper(e, n, columnName))
+			s.Field(k).SetInt(p.intHelper(e, n, columnName))
 		case "string":
-			s.Field(k).SetString(m.stringHelper(e, n, columnName))
+			s.Field(k).SetString(p.stringHelper(e, n, columnName))
 		case "Time":
-			timeVal := m.dateTimeHelper(e, n, columnName)
+			timeVal := p.dateTimeHelper(e, n, columnName)
 			s.Field(k).Set(reflect.ValueOf(timeVal))
 		case "float64":
-			s.Field(k).SetFloat(m.floatHelper(e, n, columnName))
+			s.Field(k).SetFloat(p.floatHelper(e, n, columnName))
 		default:
 			if _, ok := parsedTag["FROMJSON"]; ok {
-
 				newObject := reflect.New(s.Field(k).Type()).Interface()
-				json := m.stringHelper(e, n, columnName)
+				json := p.stringHelper(e, n, columnName)
 
 				jsoniter.Unmarshal([]byte(json), &newObject)
 
@@ -54,9 +57,10 @@ func (m *BinlogParser) GetBinLogData(element interface{}, e *canal.RowsEvent, n 
 	}
 	return nil
 }
-func (m *BinlogParser) dateTimeHelper(e *canal.RowsEvent, n int, columnName string) time.Time {
 
-	columnId := m.getBinlogIdByName(e, columnName)
+func (p *parserLog) dateTimeHelper(e *canal.RowsEvent, n int, columnName string) time.Time {
+
+	columnId := p.getBinlogIdByName(e, columnName)
 	if e.Table.Columns[columnId].Type != schema.TYPE_TIMESTAMP {
 		panic("Not dateTime type")
 	}
@@ -65,9 +69,9 @@ func (m *BinlogParser) dateTimeHelper(e *canal.RowsEvent, n int, columnName stri
 	return t
 }
 
-func (m *BinlogParser) intHelper(e *canal.RowsEvent, n int, columnName string) int64 {
+func (p *parserLog) intHelper(e *canal.RowsEvent, n int, columnName string) int64 {
 
-	columnId := m.getBinlogIdByName(e, columnName)
+	columnId := p.getBinlogIdByName(e, columnName)
 	if e.Table.Columns[columnId].Type != schema.TYPE_NUMBER {
 		return 0
 	}
@@ -95,9 +99,9 @@ func (m *BinlogParser) intHelper(e *canal.RowsEvent, n int, columnName string) i
 	return 0
 }
 
-func (m *BinlogParser) floatHelper(e *canal.RowsEvent, n int, columnName string) float64 {
+func (p *parserLog) floatHelper(e *canal.RowsEvent, n int, columnName string) float64 {
 
-	columnId := m.getBinlogIdByName(e, columnName)
+	columnId := p.getBinlogIdByName(e, columnName)
 	if e.Table.Columns[columnId].Type != schema.TYPE_FLOAT {
 		panic("Not float type")
 	}
@@ -111,18 +115,18 @@ func (m *BinlogParser) floatHelper(e *canal.RowsEvent, n int, columnName string)
 	return float64(0)
 }
 
-func (m *BinlogParser) boolHelper(e *canal.RowsEvent, n int, columnName string) bool {
+func (p *parserLog) boolHelper(e *canal.RowsEvent, n int, columnName string) bool {
 
-	val := m.intHelper(e, n, columnName)
+	val := p.intHelper(e, n, columnName)
 	if val == 1 {
 		return true
 	}
 	return false
 }
 
-func (m *BinlogParser) stringHelper(e *canal.RowsEvent, n int, columnName string) string {
+func (p *parserLog) stringHelper(e *canal.RowsEvent, n int, columnName string) string {
 
-	columnId := m.getBinlogIdByName(e, columnName)
+	columnId := p.getBinlogIdByName(e, columnName)
 	if e.Table.Columns[columnId].Type == schema.TYPE_ENUM {
 
 		values := e.Table.Columns[columnId].EnumValues
@@ -148,7 +152,7 @@ func (m *BinlogParser) stringHelper(e *canal.RowsEvent, n int, columnName string
 	return ""
 }
 
-func (m *BinlogParser) getBinlogIdByName(e *canal.RowsEvent, name string) int {
+func (p *parserLog) getBinlogIdByName(e *canal.RowsEvent, name string) int {
 	for id, value := range e.Table.Columns {
 		if value.Name == name {
 			return id
@@ -157,7 +161,7 @@ func (m *BinlogParser) getBinlogIdByName(e *canal.RowsEvent, name string) int {
 	panic(fmt.Sprintf("There is no column %s in table %s.%s", name, e.Table.Schema, e.Table.Name))
 }
 
-func parseTagSetting(tags reflect.StructTag) map[string]string {
+func (p *parserLog) parseTagSetting(tags reflect.StructTag) map[string]string {
 	settings := map[string]string{}
 	for _, str := range []string{tags.Get("sql"), tags.Get("gorm")} {
 		tags := strings.Split(str, ";")
