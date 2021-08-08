@@ -1,36 +1,21 @@
 # Golang binglog
 
-## Setup database
-binlog format must be 'row' In pkg/mariadb.go change with your connection data
+## Configuration
+### Environment
 ```
-cfg.Addr = fmt.Sprintf("%s:%d", "127.0.0.1", 3306) //host,port
-cfg.User = "root"
-cfg.Password = "root"
+$cp .env.example .env
 ```
-## Run Database Server
+### Run Compose
 ```
-docker-compose up
+$docker-compose up
 ```
-
-## Create Table Schema
-Create database with sql
+### Migration
 ```
-create table user
-(
-  id int auto_increment primary key,
-  name varchar(40) null,
-  status enum("active","deleted") DEFAULT "active",
-  created timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP
-) engine=InnoDB;
+go run src/main.go run db:migrate up
 ```
-Set bin log on in query
-```
-SET sql_log_bin = 1;
-```
-
 ## Run
 ```
-go run src/main.go
+go run src/main.go run
 ```
 than execute sql in your app
 ```
